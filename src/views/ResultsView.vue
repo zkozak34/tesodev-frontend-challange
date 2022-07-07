@@ -24,7 +24,12 @@
         <ResultOrder v-if="orderByShow" />
       </div>
       <div class="pagination">
-        <a class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700">Previous</a>
+        <a
+          class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700"
+          :class="[this.pagination.activePage == 1 ? 'btn-pagination-disable' : '']"
+          @click="changePage(this.pagination.activePage - 1)"
+          >Previous</a
+        >
         <a
           class="btn-pagination btn-pagination-light fs-14 fw-700"
           v-for="i in this.pagination.page"
@@ -33,7 +38,12 @@
           @click="changePage(i)"
           >{{ i }}</a
         >
-        <a class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700">Next</a>
+        <a
+          class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700"
+          :class="[this.pagination.activePage == this.pagination.page ? 'btn-pagination-disable' : '']"
+          @click="changePage(this.pagination.activePage + 1)"
+          >Next</a
+        >
       </div>
     </div>
   </div>
@@ -70,8 +80,10 @@ export default {
       }
     },
     async changePage(activePage) {
-      this.pagination.activePage = activePage;
-      await this.getAllData();
+      if (activePage >= 1 && activePage <= this.pagination.page) {
+        this.pagination.activePage = activePage;
+        await this.getAllData();
+      }
     },
   },
   watch: {
