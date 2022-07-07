@@ -10,11 +10,14 @@
 }
 
 //buttons
+%btn-shared {
+    border: none;
+    cursor: pointer;
+}
 .btn {
     padding: 12px 40px;
     border-radius: 12px;
-    border: none;
-    cursor: pointer;
+    @extend %btn-shared;
     font-size: $fs-18;
     font-weight: $fw-700;
 
@@ -30,6 +33,27 @@
 
     &-secondary {
         background-color: #F3F2F2;
+    }
+}
+.btn-pagination {
+    @extend %btn-shared;
+    border-radius: 4px;
+    border: 1px solid $border-color;
+    padding: 4px 8px;
+    display: inline-block;
+
+    &-pre-next {
+        width: 80px;
+        text-align: center;
+    }
+
+    &-light {
+        background-color: #fff;
+    }
+
+    &-active {
+        background-color: #204080;
+        color: #fff;
     }
 }
 

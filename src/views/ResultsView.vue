@@ -23,12 +23,24 @@
         </div>
         <ResultOrder v-if="orderByShow" />
       </div>
+      <div class="pagination">
+        <a class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700">Previous</a>
+        <a
+          class="btn-pagination btn-pagination-light fs-14 fw-700"
+          v-for="i in this.pagination.page"
+          :class="[i == this.pagination.activePage ? 'btn-pagination-active' : '']"
+          :key="i"
+          @click="changePage(i)"
+          >{{ i }}</a
+        >
+        <a class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700">Next</a>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getList } from "@/mixins/helperMixins";
+import { searchList } from "@/mixins/helperMixins";
 import ResultListItemVue from "@/components/ResultList/ResultListItem.vue";
 import ResultOrder from "@/components/ResultList/ResultOrder.vue";
 export default {
@@ -37,6 +49,11 @@ export default {
     return {
       searchThing: "",
       allData: [],
+      pagination: {
+        page: 1,
+        pageSize: 6,
+        activePage: 1,
+      },
       orderByShow: false,
     };
   },
@@ -47,9 +64,14 @@ export default {
   methods: {
     async getAllData() {
       if (this.searchThing.length >= 2) {
-        let response = await getList();
-        this.allData = response.dataList.filter((c) => c[0].toLowerCase().includes(this.searchThing.toLowerCase()));
+        let response = searchList(this.searchThing);
+        this.pagination.page = Math.ceil(response.length / this.pagination.pageSize);
+        this.allData = response.splice((this.pagination.activePage - 1) * this.pagination.pageSize, this.pagination.pageSize);
       }
+    },
+    async changePage(activePage) {
+      this.pagination.activePage = activePage;
+      await this.getAllData();
     },
   },
   watch: {
@@ -124,5 +146,11 @@ export default {
       border-radius: 8px;
     }
   }
+}
+.pagination {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 </style>

@@ -2,4 +2,11 @@
   <router-view />
 </template>
 
-<style lang="scss"></style>
+<script>
+import { getList } from "./mixins/helperMixins";
+export default {
+  async mounted() {
+    await getList();
+  },
+};
+</script>

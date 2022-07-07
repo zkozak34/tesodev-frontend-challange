@@ -24,3 +24,7 @@ export async function getList() {
   data.dataCount = data.dataList.length;
   return data;
 }
+
+export function searchList(keyword) {
+  return data.dataList.filter((c) => c[0].toLowerCase().includes(keyword.toLowerCase()));
+}
