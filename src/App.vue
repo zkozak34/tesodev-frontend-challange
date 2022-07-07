@@ -3,10 +3,5 @@
 </template>
 
 <script>
-import { getList } from "./mixins/helperMixins";
-export default {
-  async mounted() {
-    await getList();
-  },
-};
+export default {};
 </script>

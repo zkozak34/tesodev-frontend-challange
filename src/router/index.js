@@ -1,14 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/HomeView";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: () => import("@/views/HomeView"),
   },
   {
-    path: "/results/",
+    path: "/results",
     name: "results",
     component: () => import("@/views/ResultsView"),
   },
@@ -16,6 +15,12 @@ const routes = [
     path: "/results/:keyword",
     name: "results-with-params",
     component: () => import("@/views/ResultsView"),
+    props: true,
+  },
+  {
+    path: "/add",
+    name: "add-data",
+    component: () => import("@/views/AddData"),
     props: true,
   },
 ];

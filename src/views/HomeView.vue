@@ -1,7 +1,7 @@
 <template>
   <main class="container">
     <section class="top-bar">
-      <button class="btn btn-primary fs-18 fw-700">Add new record</button>
+      <router-link to="/add" class="btn btn-primary fs-18 fw-700">Add new record</router-link>
     </section>
     <section class="logo-wrap">
       <img src="@/assets/images/logo.png" alt="" />
@@ -71,30 +71,29 @@
 </template>
 
 <script>
-import { getList } from "@/mixins/helperMixins";
 import ResultListItemVue from "@/components/ResultList/ResultListItem.vue";
+import { mapGetters } from "vuex";
 export default {
   name: "HomeView",
   components: { ResultListItemVue },
   data() {
     return {
       searchThing: "",
-      allData: [],
       searchResults: [],
     };
   },
   mounted() {
-    this.getAllData();
+    this.$store.dispatch("fetchList");
   },
-  methods: {
-    async getAllData() {
-      this.allData = await getList();
-    },
+  computed: {
+    ...mapGetters({
+      allData: "getDataList",
+    }),
   },
   watch: {
     searchThing() {
       if (this.searchThing != "" && this.searchThing.trim().length >= 2) {
-        this.searchResults = this.allData.dataList.filter((c) => c[0].toLowerCase().includes(this.searchThing.toLowerCase())).slice(0, 3);
+        this.searchResults = this.allData.filter((c) => c[0].toLowerCase().includes(this.searchThing.toLowerCase())).slice(0, 3);
       } else {
         this.searchResults = [];
       }

@@ -7,11 +7,11 @@
           <input type="text" class="fs-18 fw-700" placeholder="Hyacinth Vincent" v-model="searchThing" />
           <button class="btn btn-primary fs-18 fw-700">Search</button>
         </div>
-        <button class="btn btn-primary fs-18 fw-700">Add new record</button>
+        <router-link to="/add" class="btn btn-primary fs-18 fw-700">Add new record</router-link>
       </div>
     </div>
-    <div class="container" v-if="allData.length > 0">
-      <div class="result-order-by" @click="orderSection.orderByShow = !orderSection.orderByShow">
+    <div class="container" v-if="searchResult.length > 0">
+      <div class="result-order-by" @click="orderByShow = !orderByShow">
         <a class="btn btn-secondary">
           <img src="@/assets/icons/sort.svg" alt="" />
           Order By
@@ -19,29 +19,29 @@
       </div>
       <div class="result-list-container">
         <div class="result-list">
-          <ResultListItemVue v-for="i in allData" :key="i" :resultItem="i" class="result-list__item" />
+          <ResultListItemVue v-for="i in searchResult" :key="i" :resultItem="i" class="result-list__item" />
         </div>
-        <ResultOrder v-if="orderSection.orderByShow" :orderType="orderBy" />
+        <ResultOrder v-if="orderByShow" :orderType="orderBy" />
       </div>
       <div class="pagination">
         <a
           class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700"
-          :class="[this.pagination.activePage == 1 ? 'btn-pagination-disable' : '']"
-          @click="changePage(this.pagination.activePage - 1)"
+          :class="[this.activePage == 1 ? 'btn-pagination-disable' : '']"
+          @click="changePage(this.activePage - 1)"
           >Previous</a
         >
         <a
           class="btn-pagination btn-pagination-light fs-14 fw-700"
-          v-for="i in this.pagination.page"
-          :class="[i == this.pagination.activePage ? 'btn-pagination-active' : '']"
+          v-for="i in this.page"
+          :class="[i == this.activePage ? 'btn-pagination-active' : '']"
           :key="i"
-          @click="changePage(i)"
+          @click="activePage = i"
           >{{ i }}</a
         >
         <a
           class="btn-pagination btn-pagination-light btn-pagination-pre-next fs-14 fw-700"
-          :class="[this.pagination.activePage == this.pagination.page ? 'btn-pagination-disable' : '']"
-          @click="changePage(this.pagination.activePage + 1)"
+          :class="[this.activePage == this.page ? 'btn-pagination-disable' : '']"
+          @click="changePage(this.activePage + 1)"
           >Next</a
         >
       </div>
@@ -50,87 +50,97 @@
 </template>
 
 <script>
-import { searchList } from "@/mixins/helperMixins";
 import ResultListItemVue from "@/components/ResultList/ResultListItem.vue";
 import ResultOrder from "@/components/ResultList/ResultOrder.vue";
+import { mapGetters } from "vuex";
 export default {
   components: { ResultListItemVue, ResultOrder },
   data() {
     return {
       searchThing: "",
-      allData: [],
-      pagination: {
-        page: 1,
-        pageSize: 6,
-        activePage: 1,
-      },
-      orderSection: {
-        orderByShow: false,
-        orderType: "name-as",
-      },
+      searchResult: [],
+      page: 1,
+      pageSize: 6,
+      activePage: 1,
+      orderByShow: false,
+      orderType: "name-as",
     };
   },
   mounted() {
     this.searchThing = this.$route.params.keyword ?? "";
-    this.getAllData();
+    this.$store.dispatch("fetchList");
+  },
+  computed: {
+    ...mapGetters({
+      allData: "getDataList",
+    }),
   },
   methods: {
-    async getAllData() {
-      if (this.searchThing.length >= 2) {
-        let response = [];
-        switch (this.orderSection.orderType) {
-          case "name-as":
-            response = searchList(this.searchThing).sort((a, b) => {
-              let x = a[0].toUpperCase();
-              let y = b[0].toUpperCase();
-              return x == y ? 0 : x > y ? 1 : -1;
-            });
-            break;
-          case "name-des":
-            response = searchList(this.searchThing).sort((a, b) => {
-              let x = a[0].toUpperCase();
-              let y = b[0].toUpperCase();
-              return x == y ? 0 : x > y ? -1 : 1;
-            });
-            break;
-          case "year-as":
-            response = searchList(this.searchThing).sort((a, b) => {
-              let x = a[3].split("/")[2];
-              let y = b[3].split("/")[2];
-              return x == y ? 0 : x > y ? 1 : -1;
-            });
-            break;
-          case "year-des":
-            response = searchList(this.searchThing).sort((a, b) => {
-              let x = a[3].split("/")[2];
-              let y = b[3].split("/")[2];
-              return x == y ? 0 : x > y ? -1 : 1;
-            });
-            break;
-          default:
-            break;
-        }
-        this.pagination.page = Math.ceil(response.length / this.pagination.pageSize);
-        this.allData = response.splice((this.pagination.activePage - 1) * this.pagination.pageSize, this.pagination.pageSize);
-      }
+    fetchData() {},
+    filterData(keyword) {
+      return this.allData.filter((c) => c[0].toLowerCase().includes(keyword.toLowerCase()));
     },
-    async changePage(activePage) {
-      if (activePage >= 1 && activePage <= this.pagination.page) {
-        this.pagination.activePage = activePage;
-        await this.getAllData();
-      }
+    spliceList(dataList) {
+      return dataList.splice((this.activePage - 1) * this.pageSize, this.pageSize);
+    },
+    calculatePageCount(dataList) {
+      return Math.ceil(dataList.length / this.pageSize);
     },
     orderBy(orderType) {
-      this.orderSection.orderType = orderType;
-      this.getAllData();
+      this.orderType = orderType;
+    },
+    changePage(activePage) {
+      if (activePage >= 1 && activePage <= this.page) {
+        this.activePage = activePage;
+      }
     },
   },
   watch: {
     searchThing() {
-      if (this.searchThing != "" && this.searchThing.length >= 2) {
-        this.getAllData();
+      if (this.searchThing.length >= 2) {
+        let filterData = this.filterData(this.searchThing);
+        this.page = this.calculatePageCount(filterData);
+        this.searchResult = this.spliceList(filterData);
       } else {
-        this.allData = [];
+        this.searchResult = [];
+        this.activePage = 1;
+      }
+    },
+    activePage() {
+      this.searchResult = this.spliceList(this.filterData(this.searchThing));
+    },
+    orderType() {
+      switch (this.orderType) {
+        case "name-as":
+          this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
+            let x = a[0].toUpperCase();
+            let y = b[0].toUpperCase();
+            return x == y ? 0 : x > y ? 1 : -1;
+          });
+          break;
+        case "name-des":
+          this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
+            let x = a[0].toUpperCase();
+            let y = b[0].toUpperCase();
+            return x == y ? 0 : x > y ? -1 : 1;
+          });
+          break;
+        case "year-as":
+          this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
+            let x = a[3].split("/")[2];
+            let y = b[3].split("/")[2];
+            return x == y ? 0 : x > y ? 1 : -1;
+          });
+          break;
+        case "year-des":
+          this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
+            let x = a[3].split("/")[2];
+            let y = b[3].split("/")[2];
+            return x == y ? 0 : x > y ? -1 : 1;
+          });
+          break;
+        default:
+          break;
       }
     },
   },
@@ -173,7 +183,7 @@ export default {
 .result-order-by {
   margin: 50px 0 10px auto;
   display: flex;
-  justify-content: end;
+  justify-content: right;
   a {
     display: flex;
     align-items: center;
