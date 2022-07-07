@@ -1,5 +1,10 @@
 # tesodev-frontend-challange
 
+## Json-Server start
+```
+json-server -w mockData.json
+```
+
 ## Project setup
 ```
 yarn install
