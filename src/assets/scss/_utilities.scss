@@ -21,6 +21,15 @@
     &-primary {
         background-color: $button-color;
         color: #fff;
+    
+        &:hover {
+            background-color: $button-hover-color;
+        }
+    
+    }
+
+    &-secondary {
+        background-color: #F3F2F2;
     }
 }
 
@@ -42,6 +51,9 @@
 }
 .fw-400 {
     font-weight: 400;
+}
+.fw-500 {
+    font-weight: 500;
 }
 .fw-700 {
     font-weight: 700;
