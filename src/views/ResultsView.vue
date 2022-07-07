@@ -11,17 +11,17 @@
       </div>
     </div>
     <div class="container" v-if="allData.length > 0">
-      <div class="result-order-by" @click="orderByShow = !orderByShow">
+      <div class="result-order-by" @click="orderSection.orderByShow = !orderSection.orderByShow">
         <a class="btn btn-secondary">
           <img src="@/assets/icons/sort.svg" alt="" />
           Order By
         </a>
       </div>
-      <div class="result-list">
-        <div class="result-list-wrap">
-          <ResultListItemVue v-for="i in allData" :key="i" :resultItem="i" class="result-list-wrap__item" />
+      <div class="result-list-container">
+        <div class="result-list">
+          <ResultListItemVue v-for="i in allData" :key="i" :resultItem="i" class="result-list__item" />
         </div>
-        <ResultOrder v-if="orderByShow" />
+        <ResultOrder v-if="orderSection.orderByShow" :orderType="orderBy" />
       </div>
       <div class="pagination">
         <a
@@ -64,7 +64,10 @@ export default {
         pageSize: 6,
         activePage: 1,
       },
-      orderByShow: false,
+      orderSection: {
+        orderByShow: false,
+        orderType: "name-as",
+      },
     };
   },
   mounted() {
@@ -74,7 +77,39 @@ export default {
   methods: {
     async getAllData() {
       if (this.searchThing.length >= 2) {
-        let response = searchList(this.searchThing);
+        let response = [];
+        switch (this.orderSection.orderType) {
+          case "name-as":
+            response = searchList(this.searchThing).sort((a, b) => {
+              let x = a[0].toUpperCase();
+              let y = b[0].toUpperCase();
+              return x == y ? 0 : x > y ? 1 : -1;
+            });
+            break;
+          case "name-des":
+            response = searchList(this.searchThing).sort((a, b) => {
+              let x = a[0].toUpperCase();
+              let y = b[0].toUpperCase();
+              return x == y ? 0 : x > y ? -1 : 1;
+            });
+            break;
+          case "year-as":
+            response = searchList(this.searchThing).sort((a, b) => {
+              let x = a[3].split("/")[2];
+              let y = b[3].split("/")[2];
+              return x == y ? 0 : x > y ? 1 : -1;
+            });
+            break;
+          case "year-des":
+            response = searchList(this.searchThing).sort((a, b) => {
+              let x = a[3].split("/")[2];
+              let y = b[3].split("/")[2];
+              return x == y ? 0 : x > y ? -1 : 1;
+            });
+            break;
+          default:
+            break;
+        }
         this.pagination.page = Math.ceil(response.length / this.pagination.pageSize);
         this.allData = response.splice((this.pagination.activePage - 1) * this.pagination.pageSize, this.pagination.pageSize);
       }
@@ -84,6 +119,10 @@ export default {
         this.pagination.activePage = activePage;
         await this.getAllData();
       }
+    },
+    orderBy(orderType) {
+      this.orderSection.orderType = orderType;
+      this.getAllData();
     },
   },
   watch: {
@@ -146,16 +185,20 @@ export default {
     }
   }
 }
-.result-list {
+.result-list-container {
   display: flex;
   gap: 20px;
-  .result-list-wrap {
+  .result-list {
     width: 80%;
 
     &__item {
       background: #fff;
       padding: 19px 27px;
       border-radius: 8px;
+      margin: 10px 0;
+      &:hover {
+        background-color: rgba(#4f75c2, $alpha: 0.21);
+      }
     }
   }
 }
