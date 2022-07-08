@@ -22,9 +22,6 @@ export default {
         this.$emit("inputValue", { inputName: this.inputName, inputValue: newValue });
       }
     },
-    inputError(newValue, oldValue) {
-      if (newValue != oldValue) this.errorMessage = newValue;
-    },
   },
 };
 </script>
@@ -63,8 +60,10 @@ export default {
 }
 
 .error {
-  #inputName {
+  #errorMessage {
     color: $error-color;
+    display: inline-block;
+    margin: 10px 0 0 7px;
   }
 
   input {
@@ -73,12 +72,6 @@ export default {
     &::placeholder {
       color: $error-color;
     }
-  }
-
-  #errorMessage {
-    display: inline-block;
-    color: $error-color;
-    margin: 10px 0 0 7px;
   }
 }
 </style>
