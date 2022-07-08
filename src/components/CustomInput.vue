@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  props: ["inputLabel", "inputType", "inputPlaceholder", "inputName", "inputError"],
+  props: ["inputLabel", "inputType", "inputPlaceholder", "inputName", "inputError", "inputModel"],
   data() {
     return {
       errorMessage: "",
@@ -20,6 +20,11 @@ export default {
       if (newValue != oldValue) {
         this.errorMessage = "";
         this.$emit("inputValue", { inputName: this.inputName, inputValue: newValue });
+      }
+    },
+    inputModel(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.inputValue = newValue;
       }
     },
   },

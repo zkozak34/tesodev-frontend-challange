@@ -19,6 +19,7 @@
           inputPlaceholder="Enter name and surname"
           inputName="fullName"
           @inputValue="getValue"
+          :inputModel="inputs.fullName.value"
           :inputError="inputs.fullName.error"
         />
         <CustomInput
@@ -27,6 +28,7 @@
           inputPlaceholder="Enter a country"
           inputName="country"
           @inputValue="getValue"
+          :inputModel="inputs.country.value"
           :inputError="inputs.country.error"
         />
         <CustomInput
@@ -35,6 +37,7 @@
           inputPlaceholder="Enter a city"
           inputName="city"
           @inputValue="getValue"
+          :inputModel="inputs.city.value"
           :inputError="inputs.city.error"
         />
         <CustomInput
@@ -43,6 +46,7 @@
           inputPlaceholder="Enter a e-mail (abc@xyz.com)"
           inputName="email"
           @inputValue="getValue"
+          :inputModel="inputs.email.value"
           :inputError="inputs.email.error"
         />
       </div>
@@ -93,12 +97,14 @@ export default {
       });
     },
     saveChanges() {
+      this.errors = [];
       let validation = this.validateForm();
-      console.log(validation.errors);
       if (validation.errors == 0) {
         this.$store.dispatch("insertList", validation.data);
+        Object.keys(this.inputs).forEach((key) => {
+          this.inputs[key].value = "";
+        });
       } else {
-        this.errors = [];
         Object.keys(validation.data).forEach((key) => {
           if (Object.keys(this.inputs).includes(key)) {
             this.errors.push(Object.values(this.inputs[key])[1]);
