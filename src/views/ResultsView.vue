@@ -147,8 +147,8 @@ export default {
 
 <style scoped lang="scss">
 .result-view {
-  background: #fcfcfc;
   height: 100vh;
+  background: #fcfcfc;
 }
 .top-bar {
   display: flex;
