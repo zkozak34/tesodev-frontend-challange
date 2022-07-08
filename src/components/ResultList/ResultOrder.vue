@@ -1,16 +1,16 @@
 <template>
   <ul id="order-by">
     <li @click="selectedOrderType = 'name-as'" :class="[selectedOrderType == 'name-as' ? 'selected' : '']">
-      <a href="#" class="fs-14 fw-700">Name ascending</a>
+      <a class="fs-14 fw-700">Name ascending</a>
     </li>
     <li @click="selectedOrderType = 'name-des'" :class="[selectedOrderType == 'name-des' ? 'selected' : '']">
-      <a href="#" class="fs-14 fw-700">Name descending</a>
+      <a class="fs-14 fw-700">Name descending</a>
     </li>
     <li @click="selectedOrderType = 'year-as'" :class="[selectedOrderType == 'year-as' ? 'selected' : '']">
-      <a href="#" class="fs-14 fw-700">Year ascending</a>
+      <a class="fs-14 fw-700">Year ascending</a>
     </li>
     <li @click="selectedOrderType = 'year-des'" :class="[selectedOrderType == 'year-des' ? 'selected' : '']">
-      <a href="#" class="fs-14 fw-700">Year descending</a>
+      <a class="fs-14 fw-700">Year descending</a>
     </li>
   </ul>
 </template>
@@ -23,12 +23,6 @@ export default {
       selectedOrderType: "name-as",
     };
   },
-  // methods: {
-  //   changeOrderType(orderType) {
-  //     this.selectedOrderType = orderType;
-  //     this.orderType(orderType);
-  //   },
-  // },
   watch: {
     selectedOrderType() {
       this.orderType(this.selectedOrderType);
