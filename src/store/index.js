@@ -1,6 +1,7 @@
 import appAxios from "@/adapters/appAxios";
 import { createStore } from "vuex";
 import Record from "@/models/Record";
+import { getLocalStorage, setLocalStorage } from "@/mixins/helperMixins";
 
 const store = createStore({
   state: {
@@ -14,17 +15,11 @@ const store = createStore({
     initialDataList(state, list) {
       state.fromDb = [];
       list.forEach((item) => state.fromDb.push(new Record(item[0], item[1], item[2], item[3], item[4], item[5])));
-      let tmpLs = JSON.parse(window.localStorage.getItem("mockData")) ?? [];
-      if (tmpLs.length > 0) {
-        tmpLs.forEach((item) => state.fromLs.push(new Record(item.fullName, item.company, item.email, item.date, item.country, item.city)));
-      }
+      state.fromLs = JSON.parse(getLocalStorage("mockData"));
     },
     insertList(state, data) {
       state.fromLs.push(new Record(data.fullName, data.company, data.email, data.date, data.country, data.city));
-      window.localStorage.setItem(
-        "mockData",
-        state.fromLs.map((item) => JSON.stringify(Object.values(item)))
-      );
+      setLocalStorage("mockData", JSON.stringify(state.fromLs));
     },
   },
   actions: {
