@@ -13,7 +13,7 @@
     </div>
     <div class="form-container">
       <div class="input-container">
-        <CustomInputVue
+        <CustomInput
           inputLabel="Name Surname"
           inputType="text"
           inputPlaceholder="Enter name and surname"
@@ -21,7 +21,7 @@
           @inputValue="getValue"
           :inputError="inputs.fullName.error"
         />
-        <CustomInputVue
+        <CustomInput
           inputLabel="Country"
           inputType="text"
           inputPlaceholder="Enter a country"
@@ -29,7 +29,7 @@
           @inputValue="getValue"
           :inputError="inputs.country.error"
         />
-        <CustomInputVue
+        <CustomInput
           inputLabel="City"
           inputType="text"
           inputPlaceholder="Enter a city"
@@ -37,7 +37,7 @@
           @inputValue="getValue"
           :inputError="inputs.city.error"
         />
-        <CustomInputVue
+        <CustomInput
           inputLabel="Email"
           inputType="email"
           inputPlaceholder="Enter a e-mail (abc@xyz.com)"
@@ -50,13 +50,17 @@
         <button class="btn btn-primary" @click="saveChanges">Add</button>
       </div>
     </div>
+    <div class="alert">
+      <CustomAlertDialog dialogTitle="Error while adding link element" :dialogMessage="errors" dialogType="Error" />
+    </div>
   </div>
 </template>
 
 <script>
-import CustomInputVue from "@/components/CustomInput.vue";
+import CustomInput from "@/components/CustomInput.vue";
+import CustomAlertDialog from "@/components/CustomAlertDialog.vue";
 export default {
-  components: { CustomInputVue },
+  components: { CustomInput, CustomAlertDialog },
   data() {
     return {
       inputs: {
@@ -77,6 +81,7 @@ export default {
           error: "",
         },
       },
+      errors: [],
     };
   },
   methods: {
@@ -99,6 +104,26 @@ export default {
       }
     },
     saveChanges() {
+      let validation = this.validateForm();
+      if (validation.errors == 0) {
+        this.$store.dispatch("insertList", validation.data);
+        Object.keys(validation.data).forEach((key) => {
+          if (Object.keys(this.inputs).includes(key)) {
+            this.inputs[key].value = "";
+            this.inputs[key].error = "";
+            this.errors = [];
+          }
+        });
+      } else {
+        this.errors = [];
+        Object.keys(validation.data).forEach((key) => {
+          if (Object.keys(this.inputs).includes(key)) {
+            this.errors.push(Object.values(this.inputs[key])[1]);
+          }
+        });
+      }
+    },
+    validateForm() {
       const letters = /^[a-zA-Z\s]*$/;
       const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       let date = new Date();
@@ -138,22 +163,11 @@ export default {
         this.inputs.email.error = "";
       }
 
-      let formValid = this.errorCheck();
-      if (formValid == 0) {
-        this.$store.dispatch("insertList", inputValues);
-        Object.keys(inputValues).forEach((key) => {
-          if (Object.keys(this.inputs).includes(key)) {
-            this.inputs[key].value = "";
-          }
-        });
-      }
-    },
-    errorCheck() {
       let errors = 4;
       for (let key in this.inputs) {
         this.inputs[key].error == "" ? errors-- : "";
       }
-      return errors;
+      return { errors: errors, data: inputValues };
     },
   },
 };
@@ -189,12 +203,17 @@ export default {
   max-width: 50%;
   margin-left: 10%;
 }
-
 .input-container {
   margin: 35px 0;
 }
 .form-button {
   display: flex;
   justify-content: right;
+}
+.alert {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 55%;
 }
 </style>
