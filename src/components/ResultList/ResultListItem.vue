@@ -2,12 +2,12 @@
   <div class="result-list__item">
     <img src="@/assets/icons/location.svg" alt="" />
     <div class="result-list__item_content-right">
-      <p class="fs-16 fw-400">{{ resultItem[4] }}</p>
-      <p class="fs-14 fw-400">{{ resultItem[5] }}</p>
+      <p class="fs-16 fw-400">{{ resultItem.country }}</p>
+      <p class="fs-14 fw-400">{{ resultItem.city }}</p>
     </div>
     <div class="result-list__item_content-left">
-      <p class="fs-16 fw-400">{{ resultItem[0] }}</p>
-      <p class="fs-14 fw-400">{{ resultItem[3] }}</p>
+      <p class="fs-16 fw-400">{{ resultItem.fullName }}</p>
+      <p class="fs-14 fw-400">{{ resultItem.date }}</p>
     </div>
   </div>
 </template>

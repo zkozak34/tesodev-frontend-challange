@@ -77,13 +77,12 @@ export default {
   },
   methods: {
     filterData(keyword) {
-      return this.allData.filter((c) => c[0].toLowerCase().includes(keyword.toLowerCase()));
+      return this.allData.filter((c) => c.fullName.toLowerCase().includes(keyword.toLowerCase()));
     },
     sliceList(dataList) {
       let startItemIndex = (this.activePage - 1) * this.pageSize;
       return dataList.slice(startItemIndex, startItemIndex + this.pageSize);
     },
-
     orderBy(orderType) {
       this.orderType = orderType;
     },
@@ -111,29 +110,29 @@ export default {
       switch (this.orderType) {
         case "name-as":
           this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
-            let x = a[0].toUpperCase();
-            let y = b[0].toUpperCase();
+            let x = a.fullName.toUpperCase();
+            let y = b.fullName.toUpperCase();
             return x == y ? 0 : x > y ? 1 : -1;
           });
           break;
         case "name-des":
           this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
-            let x = a[0].toUpperCase();
-            let y = b[0].toUpperCase();
+            let x = a.fullName.toUpperCase();
+            let y = b.fullName.toUpperCase();
             return x == y ? 0 : x > y ? -1 : 1;
           });
           break;
         case "year-as":
           this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
-            let x = a[3].split("/")[2];
-            let y = b[3].split("/")[2];
+            let x = a.date.split("/")[2];
+            let y = b.date.split("/")[2];
             return x == y ? 0 : x > y ? 1 : -1;
           });
           break;
         case "year-des":
           this.searchResult = this.filterData(this.searchThing).sort((a, b) => {
-            let x = a[3].split("/")[2];
-            let y = b[3].split("/")[2];
+            let x = a.date.split("/")[2];
+            let y = b.date.split("/")[2];
             return x == y ? 0 : x > y ? -1 : 1;
           });
           break;

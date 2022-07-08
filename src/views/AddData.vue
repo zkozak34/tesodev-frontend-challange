@@ -86,34 +86,17 @@ export default {
   },
   methods: {
     getValue(value) {
-      switch (value.inputName) {
-        case "fullName":
-          this.inputs.fullName.value = value.inputValue;
-          break;
-        case "country":
-          this.inputs.country.value = value.inputValue;
-          break;
-        case "city":
-          this.inputs.city.value = value.inputValue;
-          break;
-        case "email":
-          this.inputs.email.value = value.inputValue;
-          break;
-        default:
-          break;
-      }
+      Object.keys(this.inputs).forEach((input) => {
+        if (input == value.inputName) {
+          this.inputs[input].value = value.inputValue;
+        }
+      });
     },
     saveChanges() {
       let validation = this.validateForm();
+      console.log(validation.errors);
       if (validation.errors == 0) {
         this.$store.dispatch("insertList", validation.data);
-        Object.keys(validation.data).forEach((key) => {
-          if (Object.keys(this.inputs).includes(key)) {
-            this.inputs[key].value = "";
-            this.inputs[key].error = "";
-            this.errors = [];
-          }
-        });
       } else {
         this.errors = [];
         Object.keys(validation.data).forEach((key) => {
@@ -126,8 +109,8 @@ export default {
     validateForm() {
       const letters = /^[a-zA-Z\s]*$/;
       const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      let date = new Date();
-      let today = `${date.getDay().toString().padStart(2, "0")}/${date.getMonth().toString().padStart(2, "0")}/${date.getFullYear()}`;
+      const date = new Date();
+      const today = `${date.getDay().toString().padStart(2, "0")}/${date.getMonth().toString().padStart(2, "0")}/${date.getFullYear()}`;
       let inputValues = {
         fullName: this.inputs.fullName.value.trim(),
         company: this.inputs.country.value.trim(),
@@ -179,7 +162,6 @@ export default {
   height: 100vh;
   padding-top: 30px;
 }
-
 .top-bar {
   margin-left: 40px;
   display: flex;
@@ -198,7 +180,6 @@ export default {
     }
   }
 }
-
 .form-container {
   max-width: 50%;
   margin-left: 10%;

@@ -73,7 +73,7 @@ export default {
   watch: {
     searchThing() {
       if (this.searchThing != "" && this.searchThing.trim().length >= 2) {
-        this.searchResults = this.allData.filter((c) => c[0].toLowerCase().includes(this.searchThing.toLowerCase())).slice(0, 3);
+        this.searchResults = this.allData.filter((c) => c.fullName.toLowerCase().includes(this.searchThing.toLowerCase())).slice(0, 3);
       } else {
         this.searchResults = [];
       }

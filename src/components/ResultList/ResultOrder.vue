@@ -43,6 +43,7 @@ export default {
 
   li {
     padding: 5px 9px;
+    cursor: pointer;
   }
 
   .selected {

@@ -22,10 +22,6 @@
   </footer>
 </template>
 
-<script>
-export default {};
-</script>
-
 <style lang="scss">
 .footer {
   background-color: rgba($color: $footer-color, $alpha: 0.72);
