@@ -1,29 +1,6 @@
 # tesodev-frontend-challange
 
-## Json-Server start
-```
-json-server -w mockData.json
-```
-
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Stages of running the project
+1.  `yarn install`
+2.  `jsons-server -w mockData.json`
+3.  `yarn serve`
