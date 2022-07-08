@@ -3,16 +3,19 @@ import { createStore } from "vuex";
 
 const store = createStore({
   state: {
-    dataList: [],
+    fromLs: [],
+    fromDb: [],
   },
   getters: {
-    getDataList: (state) => state.dataList,
+    getDataList: (state) => [...state.fromLs, ...state.fromDb],
   },
   mutations: {
     setDataList(state, list) {
-      let fromLs = JSON.parse(window.localStorage.getItem("mockData")) ?? [];
-      let fromDb = list;
-      state.dataList = [...fromLs, ...fromDb];
+      state.fromLs = JSON.parse(window.localStorage.getItem("mockData")) ?? [];
+      state.fromDb = list;
+    },
+    insertList(state, list) {
+      state.fromLs.push(Object.values(list));
     },
   },
   actions: {
@@ -23,6 +26,10 @@ const store = createStore({
           commit("setDataList", response.data);
         })
         .catch((err) => console.log(err));
+    },
+    insertList({ commit, state }, data) {
+      commit("insertList", data);
+      window.localStorage.setItem("mockData", JSON.stringify(state.fromLs));
     },
   },
 });

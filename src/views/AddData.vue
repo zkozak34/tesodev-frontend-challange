@@ -17,32 +17,32 @@
           inputLabel="Name Surname"
           inputType="text"
           inputPlaceholder="Enter name and surname"
-          @inputValue="getValue"
           inputName="fullName"
+          @inputValue="getValue"
           :inputError="inputs.fullName.error"
         />
         <CustomInputVue
           inputLabel="Country"
           inputType="text"
           inputPlaceholder="Enter a country"
-          @inputValue="getValue"
           inputName="country"
+          @inputValue="getValue"
           :inputError="inputs.country.error"
         />
         <CustomInputVue
           inputLabel="City"
           inputType="text"
           inputPlaceholder="Enter a city"
-          @inputValue="getValue"
           inputName="city"
+          @inputValue="getValue"
           :inputError="inputs.city.error"
         />
         <CustomInputVue
           inputLabel="Email"
           inputType="email"
           inputPlaceholder="Enter a e-mail (abc@xyz.com)"
-          @inputValue="getValue"
           inputName="email"
+          @inputValue="getValue"
           :inputError="inputs.email.error"
         />
       </div>
@@ -55,7 +55,6 @@
 
 <script>
 import CustomInputVue from "@/components/CustomInput.vue";
-import { addNew } from "@/mixins/helperMixins";
 export default {
   components: { CustomInputVue },
   data() {
@@ -78,7 +77,6 @@ export default {
           error: "",
         },
       },
-      formValid: false,
     };
   },
   methods: {
@@ -101,13 +99,17 @@ export default {
       }
     },
     saveChanges() {
-      const letters = /^[A-Za-z]+$/;
+      const letters = /^[a-zA-Z\s]*$/;
       const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let date = new Date();
+      let today = `${date.getDay().toString().padStart(2, "0")}/${date.getMonth().toString().padStart(2, "0")}/${date.getFullYear()}`;
       let inputValues = {
-        fullName: this.inputs.fullName.value,
-        country: this.inputs.country.value,
-        city: this.inputs.city.value,
-        email: this.inputs.email.value,
+        fullName: this.inputs.fullName.value.trim(),
+        company: this.inputs.country.value.trim(),
+        email: this.inputs.email.value.trim(),
+        date: today,
+        country: this.inputs.country.value.trim(),
+        city: this.inputs.city.value.trim(),
       };
       if (!inputValues.fullName.match(letters)) {
         this.inputs.fullName.error = "Name and surname should contain only letters.";
@@ -135,15 +137,23 @@ export default {
       } else {
         this.inputs.email.error = "";
       }
-      this.errorCheck();
-      if (this.formValid) {
-        addNew(inputValues);
+
+      let formValid = this.errorCheck();
+      if (formValid == 0) {
+        this.$store.dispatch("insertList", inputValues);
+        Object.keys(inputValues).forEach((key) => {
+          if (Object.keys(this.inputs).includes(key)) {
+            this.inputs[key].value = "";
+          }
+        });
       }
     },
     errorCheck() {
-      if (this.inputs.fullName.error == "" && this.inputs.country.error == "" && this.inputs.city.error == "" && this.inputs.email.error == "") {
-        this.formValid = true;
+      let errors = 4;
+      for (let key in this.inputs) {
+        this.inputs[key].error == "" ? errors-- : "";
       }
+      return errors;
     },
   },
 };

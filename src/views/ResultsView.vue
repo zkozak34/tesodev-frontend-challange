@@ -76,16 +76,14 @@ export default {
     }),
   },
   methods: {
-    fetchData() {},
     filterData(keyword) {
       return this.allData.filter((c) => c[0].toLowerCase().includes(keyword.toLowerCase()));
     },
-    spliceList(dataList) {
-      return dataList.splice((this.activePage - 1) * this.pageSize, this.pageSize);
+    sliceList(dataList) {
+      let startItemIndex = (this.activePage - 1) * this.pageSize;
+      return dataList.slice(startItemIndex, startItemIndex + this.pageSize);
     },
-    calculatePageCount(dataList) {
-      return Math.ceil(dataList.length / this.pageSize);
-    },
+
     orderBy(orderType) {
       this.orderType = orderType;
     },
@@ -99,15 +97,15 @@ export default {
     searchThing() {
       if (this.searchThing.length >= 2) {
         let filterData = this.filterData(this.searchThing);
-        this.page = this.calculatePageCount(filterData);
-        this.searchResult = this.spliceList(filterData);
+        this.page = Math.ceil(filterData.length / this.pageSize);
+        this.searchResult = this.sliceList(filterData);
       } else {
         this.searchResult = [];
         this.activePage = 1;
       }
     },
     activePage() {
-      this.searchResult = this.spliceList(this.filterData(this.searchThing));
+      this.searchResult = this.sliceList(this.filterData(this.searchThing));
     },
     orderType() {
       switch (this.orderType) {
