@@ -2,5 +2,5 @@
 
 ## Stages of running the project
 1.  `yarn install`
-2.  `jsons-server -w mockData.json`
+2.  `yarn json-server -w mockData.json`
 3.  `yarn serve`
